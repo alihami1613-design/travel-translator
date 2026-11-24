@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#0b0f19" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="مترجم سفری" />
+<title>مترجم سخنگوی هوشمند سفری</title>
+<link id="pwa-manifest" rel="manifest" href="" />
+<style>
+  :root {
+    --bg: #0b0f19;
+    --surface: #131a2a;
+    --surface-2: #1b2438;
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-2: #818cf8;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --radius: 16px;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Vazirmatn", Tahoma, sans-serif;
+    background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 45%),
+                radial-gradient(circle at bottom left, rgba(129, 140, 248, 0.12), transparent 45%),
+                var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 48px;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: #08101e;
+    flex-shrink: 0;
+  }
+
+  .brand h1 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .brand p {
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .install-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #08101e;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+  }
+
+  .install-btn.visible {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .chip-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    background: var(--surface-2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 11px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .chip.active {
+    background: rgba(56, 189, 248, 0.16);
+    color: var(--accent);
+    border-color: rgba(56, 189, 248, 0.45);
+    font-weight: 600;
+  }
+
+  select.lang-select {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 112px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+    resize: vertical;
+    font-family: inherit;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  button.btn {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.1s ease, opacity 0.15s ease;
+  }
+
+  button.btn:active {
+    transform: scale(0.98);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #07101d;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .btn-secondary {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-mic.listening {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.5);
+  }
+
+  .result-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 10px;
+  }
+
+  .result-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .translated-text {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.7;
+    color: #ffffff;
+  }
+
+  .phonetic-text {
+    font-size: 14px;
+    color: var(--accent);
+    margin-top: 6px;
+  }
+
+  .words-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .word-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text);
+  }
+
+  .word-pill:hover {
+    border-color: var(--accent);
+  }
+
+  .samples {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .sample-chip {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .sample-chip:hover {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+
+  .saved-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-top: 8px;
+  }
+
+  .saved-item .orig {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .saved-item .trans {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .status-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .tab-btn.active {
+    background: rgba(56, 189, 248, 0.14);
+    color: var(--accent);
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .guide-step {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="brand">
+      <div class="brand-icon">🌍</div>
+      <div>
+        <h1>مترجم سخنگوی سفری (۶ زبان)</h1>
+        <p>انگلیسی، فارسی، عربی، ترکی، اسپانیایی، فرانسوی</p>
+      </div>
+    </div>
+    <button id="installBtn" class="install-btn" type="button">نصب اپ</button>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="translator" type="button">مترجم</button>
+    <button class="tab-btn" data-tab="saved" type="button">ذخیره‌شده‌ها (<span id="savedCount">0</span>)</button>
+    <button class="tab-btn" data-tab="guide" type="button">راهنما</button>
+  </div>
+
+  <section id="tab-translator">
+    <div class="card">
+      <div class="controls-bar">
+        <div class="chip-group">
+          <select id="targetLang" class="lang-select">
+            <option value="fa" selected>مقصد: فارسی (Persian)</option>
+            <option value="en">مقصد: انگلیسی (English)</option>
+            <option value="ar">مقصد: عربی (Arabic)</option>
+            <option value="tr">مقصد: ترکی (Turkish)</option>
+            <option value="es">مقصد: اسپانیایی (Spanish)</option>
+            <option value="fr">مقصد: فرانسوی (French)</option>
+          </select>
+          <select id="voiceLang" class="lang-select">
+            <option value="en-US" selected>صدا: انگلیسی US</option>
+            <option value="en-GB">صدا: انگلیسی UK</option>
+            <option value="ar-SA">صدا: عربی</option>
+            <option value="tr-TR">صدا: ترکی</option>
+            <option value="es-ES">صدا: اسپانیایی</option>
+            <option value="fr-FR">صدا: فرانسوی</option>
+            <option value="fa-IR">صدا: فارسی</option>
+          </select>
+        </div>
+        <div class="chip-group">
+          <button class="chip active" data-rate="1.0" type="button">1x</button>
+          <button class="chip" data-rate="0.65" type="button">آهسته</button>
+        </div>
+      </div>
+
+      <textarea id="inputText" dir="auto" placeholder="عبارت خود را بنویسید یا بگویید...">Where is the nearest hotel?</textarea>
+
+      <div class="samples" id="sampleContainer">
+        <span class="sample-chip" data-sample="Where is the nearest hotel?">هتل کجاست؟</span>
+        <span class="sample-chip" data-sample="How much does this cost?">قیمت این چقدر است؟</span>
+        <span class="sample-chip" data-sample="Could you help me, please?">لطفاً کمکم کنید؟</span>
+      </div>
+
+      <div class="actions">
+        <button id="translateBtn" class="btn btn-primary" type="button">ترجمه و تلفظ</button>
+        <button id="speakBtn" class="btn btn-secondary" type="button">پخش صدا</button>
+        <button id="micBtn" class="btn btn-secondary btn-mic" type="button">میکروفون</button>
+        <button id="saveBtn" class="btn btn-secondary" type="button">ذخیره</button>
+      </div>
+
+      <div id="statusMsg" class="status-note">آماده استفاده برای سفرهای خارجی.</div>
+    </div>
+
+    <div class="card">
+      <div class="result-box">
+        <div class="result-label" id="resultLabel">ترجمه</div>
+        <div id="translatedOutput" class="translated-text">کجا نزدیک‌ترین هتل است؟</div>
+        <div id="phoneticOutput" class="phonetic-text">تلفظ: Where is the nearest hotel?</div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-label">بررسی کلمه به کلمه (کلیک برای تلفظ)</div>
+        <div id="wordsGrid" class="words-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-saved" class="card hidden">
+    <h2 style="margin:0 0 8px;font-size:16px;">عبارات ذخیره‌شده سفری</h2>
+    <p style="margin:0 0 12px;font-size:12px;color:var(--muted);">ذخیره در حافظه مرورگر گوشی شما.</p>
+    <div id="savedList"></div>
+  </section>
+
+  <section id="tab-guide" class="card hidden">
+    <h2 style="margin:0 0 8px;font-size:16px;">راهنمای سریع نصب و استفاده</h2>
+    <div class="guide-step">
+      <strong>۱. استفاده در سفر:</strong> این برنامه کاملاً واکنش‌گراست و می‌توانید آن را روی صفحه اصلی گوشی (اندروید یا آیفون) به عنوان اپلیکیشن (PWA) اضافه کنید.
+    </div>
+    <div class="guide-step">
+      <strong>۲. انتخاب زبان‌ها:</strong> از منوی بالا می‌توانید زبان مقصد و زبان تلفظ صوتی را متناسب با کشوری که در آن هستید تغییر دهید.
+    </div>
+  </section>
+</div>
+
+<script>
+  (function setupPWA() {
+    const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#131a2a"/><text x="96" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="#38bdf8">🌍</text></svg>`;
+    const iconUrl = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(iconSvg)));
+    const manifest = {
+      name: "مترجم سخنگوی سفری",
+      short_name: "مترجم سفری",
+      start_url: "./",
+      display: "standalone",
+      background_color: "#0b0f19",
+      theme_color: "#0b0f19",
+      icons: [{ src: iconUrl, sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" }]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
+    const manifestLink = document.getElementById("pwa-manifest");
+    if (manifestLink) manifestLink.href = URL.createObjectURL(blob);
+  })();
+
+  const travelSamples = {
+    fa: [
+      { text: "سلام، حال شما چطور است؟", trans: "Hello, how are you?" },
+      { text: "فرودگاه کجاست؟", trans: "Where is the airport?" },
+      { text: "قیمت این چقدر است؟", trans: "How much is this?" }
+    ],
+    en: [
+      { text: "Where is the nearest hotel?", trans: "هتل کجاست؟" },
+      { text: "How much does this cost?", trans: "قیمت این چقدر است؟" },
+      { text: "Could you help me, please?", trans: "لطفاً کمکم کنید؟" }
+    ],
+    ar: [
+      { text: "أين الفندق القريب؟", trans: "هتل نزدیک کجاست؟" },
+      { text: "كم سعر هذا؟", trans: "قیمت این چقدر است؟" },
+      { text: "مساعدة من فضلك", trans: "کمک لطفاً" }
+    ],
+    tr: [
+      { text: "En yakın otel nerede?", trans: "نزدیک‌ترین هتل کجاست؟" },
+      { text: "Bu ne kadar?", trans: "این چقدر است؟" },
+      { text: "Lütfen bana yardım edin", trans: "لطفاً به من کمک کنید" }
+    ],
+    es: [
+      { text: "¿Dónde está el hotel más cercano?", trans: "نزدیک‌ترین هتل کجاست؟" },
+      { text: "¿Cuánto cuesta esto?", trans: "این چقدر قیمت دارد؟" },
+      { text: "Ayúdame por favor", trans: "لطفاً کمک کنید" }
+    ],
+    fr: [
+      { text: "Où est l'hôtel le plus proche?", trans: "نزدیک‌ترین هتل کجاست؟" },
+      { text: "Combien ça coûte?", trans: "این چقدر هزینه دارد؟" },
+      { text: "Aidez-moi s'il vous plaît", trans: "لطفاً کمکم کنید" }
+    ]
+  };
+
+  let currentRate = 1.0;
+  let deferredPrompt = null;
+
+  const inputText = document.getElementById("inputText");
+  const targetLang = document.getElementById("targetLang");
+  const voiceLang = document.getElementById("voiceLang");
+  const translatedOutput = document.getElementById("translatedOutput");
+  const phoneticOutput = document.getElementById("phoneticOutput");
+  const wordsGrid = document.getElementById("wordsGrid");
+  const statusMsg = document.getElementById("statusMsg");
+  const micBtn = document.getElementById("micBtn");
+  const installBtn = document.getElementById("installBtn");
+  const sampleContainer = document.getElementById("sampleContainer");
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.classList.add("visible");
+  });
+
+  installBtn.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.classList.remove("visible");
+  });
+
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const tab = btn.dataset.tab;
+      document.getElementById("tab-translator").classList.toggle("hidden", tab !== "translator");
+      document.getElementById("tab-saved").classList.toggle("hidden", tab !== "saved");
+      document.getElementById("tab-guide").classList.toggle("hidden", tab !== "guide");
+      if (tab === "saved") renderSaved();
+    });
+  });
+
+  document.querySelectorAll("[data-rate]").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll("[data-rate]").forEach((c) => c.classList.remove("active"));
+      chip.classList.add("active");
+      currentRate = parseFloat(chip.dataset.rate);
+    });
+  });
+
+  targetLang.addEventListener("change", () => {
+    updateSamples();
+    translateText();
+  });
+
+  function updateSamples() {
+    const lang = targetLang.value === "fa" ? "en" : "fa";
+    const list = travelSamples[lang] || travelSamples.en;
+    sampleContainer.innerHTML = "";
+    list.forEach(item => {
+      const chip = document.createElement("span");
+      chip.className = "sample-chip";
+      chip.dataset.sample = item.text;
+      chip.textContent = item.text + " (" + item.trans + ")";
+      chip.addEventListener("click", () => {
+        inputText.value = item.text;
+        translateText();
+      });
+      sampleContainer.appendChild(chip);
+    });
+  }
+
+  function speak(text, lang = voiceLang.value, rate = currentRate) {
+    if (!("speechSynthesis" in window)) {
+      statusMsg.textContent = "مرورگر از صدا پشتیبانی نمی‌کند.";
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = lang;
+    utter.rate = rate;
+    const voices = window.speechSynthesis.getVoices();
+    const matched = voices.find((v) => v.lang && v.lang.toLowerCase().includes(lang.toLowerCase().slice(0, 2)));
+    if (matched) utter.voice = matched;
+    utter.onstart = () => { statusMsg.textContent = `در حال پخش صدا (${lang})...`; };
+    utter.onend = () => { statusMsg.textContent = "پخش صدا پایان یافت."; };
+    window.speechSynthesis.speak(utter);
+  }
+
+  async function fetchOnlineTranslation(text, dest) {
+    try {
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=autodetect|${dest}`;
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      const data = await res.json();
+      const translated = data && data.responseData && data.responseData.translatedText;
+      if (translated && !translated.toLowerCase().includes("mymemory warning")) {
+        return translated;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function renderWords(text) {
+    wordsGrid.innerHTML = "";
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    words.forEach((w) => {
+      const pill = document.createElement("button");
+      pill.type = "button";
+      pill.className = "word-pill";
+      pill.textContent = w;
+      pill.addEventListener("click", () => speak(w, voiceLang.value, currentRate));
+      wordsGrid.appendChild(pill);
+    });
+  }
+
+  async function translateText() {
+    const text = inputText.value.trim();
+    if (!text) {
+      statusMsg.textContent = "لطفاً عبارتی وارد کنید.";
+      return;
+    }
+    const dest = targetLang.value;
+    phoneticOutput.textContent = "متن اصلی: " + text;
+    renderWords(text);
+
+    statusMsg.textContent = "در حال ترجمه آنلاین...";
+    const online = await fetchOnlineTranslation(text, dest);
+    if (online) {
+      translatedOutput.textContent = online;
+      statusMsg.textContent = "ترجمه انجام شد.";
+    } else {
+      translatedOutput.textContent = "خطا در اتصال به سرویس ترجمه آنلاین.";
+      statusMsg.textContent = "لطفاً اتصال اینترنت را بررسی کنید.";
+    }
+  }
+
+  document.getElementById("translateBtn").addEventListener("click", translateText);
+  document.getElementById("speakBtn").addEventListener("click", () => {
+    const text = translatedOutput.textContent.trim();
+    if (text) speak(text, voiceLang.value, currentRate);
+  });
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+  let isListening = false;
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      isListening = true;
+      micBtn.classList.add("listening");
+      micBtn.textContent = "در حال شنیدن...";
+      statusMsg.textContent = "صحبت کنید...";
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      inputText.value = transcript;
+      translateText();
+    };
+
+    recognition.onerror = (event) => {
+      statusMsg.textContent = "خطای میکروفون: " + (event.error || "خطا");
+    };
+
+    recognition.onend = () => {
+      isListening = false;
+      micBtn.classList.remove("listening");
+      micBtn.textContent = "میکروفون";
+    };
+  }
+
+  micBtn.addEventListener("click", () => {
+    if (!recognition) {
+      statusMsg.textContent = "تشخیص گفتار در مرورگر پشتیبانی نمی‌شود.";
+      return;
+    }
+    if (isListening) {
+      recognition.stop();
+    } else {
+      recognition.lang = voiceLang.value;
+      recognition.start();
+    }
+  });
+
+  const STORAGE_KEY = "travel_speaker_saved_v2";
+  function getSaved() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function setSaved(items) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    document.getElementById("savedCount").textContent = items.length;
+  }
+
+  function renderSaved() {
+    const list = document.getElementById("savedList");
+    const items = getSaved();
+    list.innerHTML = "";
+    if (!items.length) {
+      list.innerHTML = '<p style="font-size:13px;color:var(--muted);">هنوز عبارتی ذخیره نشده است.</p>';
+      return;
+    }
+    items.forEach((item, idx) => {
+      const row = document.createElement("div");
+      row.className = "saved-item";
+      row.innerHTML = `
+        <div>
+          <div class="orig">${item.orig}</div>
+          <div class="trans">${item.trans}</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="chip" type="button" data-play="${idx}">پخش</button>
+          <button class="chip" type="button" data-del="${idx}">حذف</button>
+        </div>
+      `;
+      row.querySelector("[data-play]").addEventListener("click", () => speak(item.trans, voiceLang.value, currentRate));
+      row.querySelector("[data-del]").addEventListener("click", () => {
+        const next = getSaved().filter((_, i) => i !== idx);
+        setSaved(next);
+        renderSaved();
+      });
+      list.appendChild(row);
+    });
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", () => {
+    const orig = inputText.value.trim();
+    const trans = translatedOutput.textContent.trim();
+    if (!orig || !trans) return;
+    const items = getSaved();
+    items.unshift({ orig, trans });
+    setSaved(items.slice(0, 100));
+    statusMsg.textContent = "عبارت ذخیره شد.";
+  });
+
+  setSaved(getSaved());
+  updateSamples();
+  translateText();
+</script>
+</body>
+</html>
