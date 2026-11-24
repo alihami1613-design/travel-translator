@@ -579,22 +579,49 @@
     });
   }
 
-  function speak(text, lang = voiceLang.value, rate = currentRate) {
-    if (!("speechSynthesis" in window)) {
-      statusMsg.textContent = "مرورگر از صدا پشتیبانی نمی‌کند.";
-      return;
-    }
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = lang;
-    utter.rate = rate;
-    const voices = window.speechSynthesis.getVoices();
-    const matched = voices.find((v) => v.lang && v.lang.toLowerCase().includes(lang.toLowerCase().slice(0, 2)));
-    if (matched) utter.voice = matched;
-    utter.onstart = () => { statusMsg.textContent = `در حال پخش صدا (${lang})...`; };
-    utter.onend = () => { statusMsg.textContent = "پخش صدا پایان یافت."; };
-    window.speechSynthesis.speak(utter);
+  
+function speak(text, lang = voiceLang.value, rate = currentRate) {
+  if (!("speechSynthesis" in window)) {
+    statusMsg.textContent = "مرورگر از صدا پشتیبانی نمی‌کند.";
+    return;
   }
+
+  const synth = window.speechSynthesis;
+  synth.cancel();
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = lang;
+  utter.rate = rate;
+
+  const voices = synth.getVoices();
+  const languageCode = lang.toLowerCase().split("-")[0];
+
+  const matched = voices.find(v =>
+    v.lang && v.lang.toLowerCase().split("-")[0] === languageCode
+  );
+
+  if (!matched) {
+    statusMsg.textContent = `صدای این زبان (${lang}) روی دستگاه موجود نیست.`;
+    return;
+  }
+
+  utter.voice = matched;
+
+  utter.onstart = () => {
+    statusMsg.textContent = `در حال پخش صدا (${lang})...`;
+  };
+
+  utter.onend = () => {
+    statusMsg.textContent = "پخش صدا پایان یافت.";
+  };
+
+  utter.onerror = (event) => {
+    statusMsg.textContent = `خطای پخش صدا: ${event.error}`;
+  };
+
+  synth.speak(utter);
+}
+
 
   async function fetchOnlineTranslation(text, dest) {
     try {
